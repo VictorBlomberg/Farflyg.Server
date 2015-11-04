@@ -10,7 +10,7 @@
     {
         public const string DefaultBaseUrl = "http://localhost:32093";
 
-        public static void Main(string baseUrl)
+        public static void Run(string baseUrl)
         {
             using (WebApp.Start<Startup>(baseUrl))
             {
@@ -21,7 +21,7 @@
 
         public static void Main()
         {
-            Main(DefaultBaseUrl);
+            Run(DefaultBaseUrl);
         }
     }
 }
