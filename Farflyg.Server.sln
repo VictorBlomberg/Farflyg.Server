@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.23107.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "source", "source", "{3DA06345-6F12-4F30-B7C4-B2097DC5EB29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farflyg.Server", "source\Farflyg.Server\Farflyg.Server.csproj", "{975BB9C8-F1F0-4311-B5CD-712C07E2E114}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Farflyg.Server.Runners.Selfhost", "source\Runners\Farflyg.Server.Runners.Selfhost\Farflyg.Server.Runners.Selfhost.csproj", "{2427E986-336C-4161-9741-62210084F054}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Runners", "Runners", "{FA7CD2AF-5A4D-4876-993D-395B8ADCF879}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{975BB9C8-F1F0-4311-B5CD-712C07E2E114}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{975BB9C8-F1F0-4311-B5CD-712C07E2E114}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{975BB9C8-F1F0-4311-B5CD-712C07E2E114}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{975BB9C8-F1F0-4311-B5CD-712C07E2E114}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2427E986-336C-4161-9741-62210084F054}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2427E986-336C-4161-9741-62210084F054}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2427E986-336C-4161-9741-62210084F054}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2427E986-336C-4161-9741-62210084F054}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{975BB9C8-F1F0-4311-B5CD-712C07E2E114} = {3DA06345-6F12-4F30-B7C4-B2097DC5EB29}
+		{2427E986-336C-4161-9741-62210084F054} = {FA7CD2AF-5A4D-4876-993D-395B8ADCF879}
+		{FA7CD2AF-5A4D-4876-993D-395B8ADCF879} = {3DA06345-6F12-4F30-B7C4-B2097DC5EB29}
+	EndGlobalSection
+EndGlobal
