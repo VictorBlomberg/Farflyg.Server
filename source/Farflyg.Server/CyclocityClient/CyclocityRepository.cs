@@ -11,7 +11,7 @@
 
     public sealed class CyclocityRepository : ICyclocityRepository
     {
-        private readonly Url _BaseUrl;
+        private readonly string _BaseUrl;
 
         public CyclocityRepository(CyclocityCredentials credentials)
         {
