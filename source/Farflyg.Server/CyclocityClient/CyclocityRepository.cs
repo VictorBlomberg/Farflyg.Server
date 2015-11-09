@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Immutable;
-    using System.Net;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -25,7 +24,6 @@
             var _dataUpdated = DateTimeOffset.Now;
             var _items = await _BaseUrl
                 .AppendPathSegment("stations")
-                .AllowHttpStatus(HttpStatusCode.OK)
                 .GetJsonListAsync(cancellationToken);
 
             return _items
