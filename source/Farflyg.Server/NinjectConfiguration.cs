@@ -41,6 +41,7 @@ namespace Farflyg.Server
                 .Bind<IMainRepository>()
                 .To<MainRepository>();
             
+            _kernel.Bind<ISubStartup>().To<Web.ClientAccessPolicy.Startup>();
             _kernel.Bind<ISubStartup>().To<Web.WebApi.Startup>();
 
             return _kernel;
