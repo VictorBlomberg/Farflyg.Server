@@ -1,6 +1,7 @@
 ﻿namespace Farflyg.Server.Web
 {
     using System;
+    using System.Diagnostics;
 
     using JetBrains.Annotations;
 
@@ -21,6 +22,16 @@
 
         public void Configuration(IAppBuilder app)
         {
+            if (Debugger.IsAttached)
+            {
+                app.Use(async (_http, _next) =>
+                    {
+                        await _next();
+
+                        Console.WriteLine($"{_http.Response.StatusCode}: {_http.Request.Uri}");
+                    });
+            }
+
             app.Use((_http, _next) =>
                 {
                     if (_http.Request.Headers.ContainsKey("Origin"))
