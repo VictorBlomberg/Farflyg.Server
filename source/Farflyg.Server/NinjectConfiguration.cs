@@ -9,6 +9,9 @@ namespace Farflyg.Server
 
     using JetBrains.Annotations;
 
+    using Nerven.Taskuler;
+    using Nerven.Taskuler.Core;
+
     using Ninject;
 
     using Web;
@@ -19,14 +22,57 @@ namespace Farflyg.Server
         public static IKernel CreateDefaultKernel()
         {
             var _kernel = new StandardKernel();
-            
+
+            _kernel
+                .Bind<Random>()
+                .ToSelf()
+                .InSingletonScope();
+
+            _kernel
+                .Bind<ITaskulerWorker>()
+                .ToMethod(_context => TaskulerWorker.Create())
+                .InSingletonScope()
+                .OnActivation((_context, _worker) =>
+                    {
+                        _worker.StartAsync();
+                    });
+
+            var _fakeUpdateSchedule = TimeSpan.FromSeconds(10);
+            _kernel
+                .Bind<ITaskulerScheduleHandle>()
+                .ToMethod(_context => _context.Kernel.Get<ITaskulerWorker>().AddIntervalSchedule(_fakeUpdateSchedule))
+                .WhenInjectedInto<FakeStatusCyclocityRepository>()
+                .InSingletonScope();
+
+            _kernel
+                .Bind<TimeSpan>()
+                .ToConstant(_fakeUpdateSchedule)
+                .WhenInjectedInto<FakeStatusCyclocityRepository.DefaultFakeStatusGenerator>();
+
+            _kernel
+                .Bind<FakeStatusCyclocityRepository.IFakeStatusGenerator>()
+                .To<FakeStatusCyclocityRepository.DefaultFakeStatusGenerator>()
+                .InSingletonScope();
+
             _kernel
                 .Bind<CyclocityCredentials>()
-                .ToConstant(CyclocityCredentials.GetFromConfiguration());
+                .ToMethod(_context => CyclocityCredentials.GetFromConfiguration())
+                .InSingletonScope();
 
             _kernel
                 .Bind<ICyclocityRepository>()
                 .To<CyclocityRepository>()
+                .WhenInjectedInto<CachingCyclocityRepository>();
+
+            _kernel
+                .Bind<ICyclocityRepository>()
+                .To<CachingCyclocityRepository>()
+                .WhenInjectedInto<FakeStatusCyclocityRepository>()
+                .InSingletonScope();
+
+            _kernel
+                .Bind<ICyclocityRepository>()
+                .To<FakeStatusCyclocityRepository>()
                 .InSingletonScope();
 
             _kernel
