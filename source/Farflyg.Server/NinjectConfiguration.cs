@@ -47,11 +47,11 @@ namespace Farflyg.Server
             _kernel
                 .Bind<TimeSpan>()
                 .ToConstant(_fakeUpdateSchedule)
-                .WhenInjectedInto<FakeStatusCyclocityRepository.DefaultFakeStatusGenerator>();
+                .WhenInjectedInto<FakeStatusCyclocityRepository.DefaultFakeGenerator>();
 
             _kernel
-                .Bind<FakeStatusCyclocityRepository.IFakeStatusGenerator>()
-                .To<FakeStatusCyclocityRepository.DefaultFakeStatusGenerator>()
+                .Bind<FakeStatusCyclocityRepository.IFakeGenerator>()
+                .To<FakeStatusCyclocityRepository.DefaultFakeGenerator>()
                 .InSingletonScope();
 
             _kernel

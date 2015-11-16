@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Immutable;
-    using System.Linq;
     using System.Threading;
     using System.Threading.Tasks;
 
@@ -13,84 +12,73 @@
     public sealed class FakeStatusCyclocityRepository : ICyclocityRepository
     {
         private readonly ICyclocityRepository _InnerRepository;
-        private readonly IFakeStatusGenerator _FakeStatusGenerator;
+        private readonly IFakeGenerator _FakeStatusGenerator;
         private readonly AsyncReaderWriterLock _StationsListLock;
 
-        private ImmutableList<_StationRecord> _Stations;
+        private ImmutableList<CyclocityStationData> _Stations;
 
         public FakeStatusCyclocityRepository(
             ICyclocityRepository innerRepository,
-            IFakeStatusGenerator fakeStatusGenerator,
+            IFakeGenerator fakeStatusGenerator,
             ITaskulerScheduleHandle updateFakeDataScheduleHandle)
         {
             _InnerRepository = innerRepository;
             _FakeStatusGenerator = fakeStatusGenerator;
             _StationsListLock = new AsyncReaderWriterLock();
 
-            updateFakeDataScheduleHandle.AddTask(() =>
-                {
-                    _UpdateFakeData();
-                    return Task.CompletedTask;
-                });
+            updateFakeDataScheduleHandle.AddTask(async () => await _UpdateFakeDataAsync());
         }
 
         public async Task<ImmutableList<CyclocityStationData>> GetStationsDataAsync(CancellationToken cancellationToken = default(CancellationToken))
         {
-            ImmutableList<CyclocityStationData> _stations = null;
-
             using (await _StationsListLock.ReaderLockAsync())
             {
                 if (_Stations != null)
                 {
-                    _stations = _Stations.ConvertAll(_station => _station.Data);
+                    return _Stations;
                 }
             }
-            
-            if (_stations == null)
+
+            using (var _lock = await _StationsListLock.UpgradeableReaderLockAsync())
             {
-                using (var _lock = await _StationsListLock.UpgradeableReaderLockAsync())
+                var _stations = ImmutableList.CreateRange(await _InnerRepository.GetStationsDataAsync(cancellationToken));
+                using (await _lock.UpgradeAsync())
                 {
-                    var _innerData = await _InnerRepository.GetStationsDataAsync(cancellationToken);
-
-                    using (await _lock.UpgradeAsync())
-                    {
-                        _Stations = ImmutableList.CreateRange(_innerData.Select(_stationData => new _StationRecord(_stationData)));
-                    }
-
-                    _stations = _Stations.ConvertAll(_station => _station.Data);
+                    _Stations = _stations;
                 }
-            }
 
-            return _stations;
+                return _stations;
+            }
         }
 
-        private void _UpdateFakeData()
+        private async Task _UpdateFakeDataAsync()
         {
-            using (_StationsListLock.WriterLock())
+            using (var _lock = await _StationsListLock.UpgradeableReaderLockAsync())
             {
                 if (_Stations != null)
                 {
-                    foreach (var _station in _Stations)
+                    var _stations = _Stations.ConvertAll(_station => _FakeStatusGenerator.Generate(_station));
+                    using (await _lock.UpgradeAsync())
                     {
-                        _station.Data = _FakeStatusGenerator.Generate(_station.Data);
+                        _Stations = _stations;
                     }
                 }
             }
         }
 
-        public interface IFakeStatusGenerator
+        public interface IFakeGenerator
         {
             CyclocityStationData Generate(CyclocityStationData station);
         }
 
-        public sealed class DefaultFakeStatusGenerator : IFakeStatusGenerator
+        public sealed class DefaultFakeGenerator : IFakeGenerator
         {
             private readonly Random _Random;
             private readonly int _TimeFactor;
 
             private int _Trend;
 
-            public DefaultFakeStatusGenerator(Random random, TimeSpan updateInterval)
+            public DefaultFakeGenerator(Random random, TimeSpan updateInterval)
             {
                 _Random = random;
                 _TimeFactor = (int)Math.Floor(60D / updateInterval.TotalSeconds);
@@ -121,18 +109,8 @@
 
                 return station
                     .WithAvailableBikes(station.AvailableBikes + _availableBikesChange)
-                    .WithAvailableBikeStands(station.AvailableBikeStands + (_availableBikesChange*-1));
+                    .WithAvailableBikeStands(station.AvailableBikeStands + (_availableBikesChange * -1));
             }
-        }
-
-        private sealed class _StationRecord
-        {
-            public _StationRecord(CyclocityStationData data)
-            {
-                Data = data;
-            }
-
-            public CyclocityStationData Data { get; set; }
         }
     }
 }
