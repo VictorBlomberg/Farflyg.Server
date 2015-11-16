@@ -81,7 +81,7 @@ namespace Farflyg.Server
 
             _kernel
                 .Bind<CacheItemPolicy>()
-                .ToConstant(new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(30), });
+                .ToMethod(_context => new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddSeconds(30), });
 
             _kernel
                 .Bind<IMainRepository>()
