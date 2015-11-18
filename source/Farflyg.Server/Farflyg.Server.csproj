@@ -181,6 +181,7 @@
     <Compile Include="Station.Immutabler.Generated.cs" />
     <Compile Include="StationStatus.Immutabler.Generated.cs" />
     <Compile Include="NinjectConfiguration.cs" />
+    <Compile Include="Web\Readme\Startup.cs" />
     <Compile Include="Web\ClientAccessPolicy\Startup.cs" />
     <Compile Include="Web\WebApi\Startup.cs" />
     <Compile Include="Web\SubStartupBase.cs" />

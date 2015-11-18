@@ -114,6 +114,7 @@ namespace Farflyg.Server
 
             _kernel.Bind<ISubStartup>().To<Web.ClientAccessPolicy.Startup>();
             _kernel.Bind<ISubStartup>().To<Web.WebApi.Startup>();
+            _kernel.Bind<ISubStartup>().To<Web.Readme.Startup>();
 
             return _kernel;
         }
