@@ -7,10 +7,10 @@
     /// <Immutabler />
     public sealed partial class CyclocityCredentials
     {
-        public const string ApiKeyConfigurationName = "CyclocityApiKey";
-        public const string ApiKeyFilePathConfigurationName = "CyclocityApiKeyFilePath";
-        public const string ContractConfigurationName = "CyclocityContract";
-        public const string BaseUrlConfigurationName = "CyclocityBaseUrl";
+        public static string ApiKeyConfigurationName => typeof(CyclocityCredentials).FullName + "." + nameof(ApiKey);
+        public static string ApiKeyFilePathConfigurationName => typeof(CyclocityCredentials).FullName + "." + nameof(ApiKey) + "FilePath";
+        public static string ContractConfigurationName => typeof(CyclocityCredentials).FullName + "." + nameof(Contract);
+        public static string BaseUrlConfigurationName => typeof(CyclocityCredentials).FullName + "." + nameof(BaseUrl);
 
         public string BaseUrl { get; }
 
